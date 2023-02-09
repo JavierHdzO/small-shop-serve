@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
+import { hashSync, genSaltSync } from 'bcrypt';
 
 @Entity()
 export class User {
@@ -36,4 +37,9 @@ export class User {
     })
     google:boolean;
 
+    @BeforeInsert()
+    hashPassword(){
+        const salt = genSaltSync(20);
+        this.passsword = hashSync(this.passsword, salt);
+    }
 }
