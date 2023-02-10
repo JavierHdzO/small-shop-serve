@@ -28,7 +28,7 @@ export class User {
     @Column({
         type:'text'
     })
-    passsword:string;
+    password:string;
 
 
     @Column({
@@ -37,9 +37,18 @@ export class User {
     })
     google:boolean;
 
+
+    @Column({
+        type:'bool',
+        default: true
+    })
+    status: boolean;
+
     @BeforeInsert()
     hashPassword(){
-        const salt = genSaltSync(20);
-        this.passsword = hashSync(this.passsword, salt);
+        const saltRounds = genSaltSync(10);
+        this.password =hashSync(this.password, saltRounds);
     }
+
+    
 }

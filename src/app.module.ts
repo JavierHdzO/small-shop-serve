@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
 import { validationSchema } from './config/validation';
+import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -17,7 +18,7 @@ import { UserModule } from './user/user.module';
       username:process.env.USERNAME_DB,
       password:process.env.PASSWORD_DB,
       database:process.env.NAME_DB,
-      entities:[],
+      entities:[User],
       synchronize: true
     }),
     UserModule
