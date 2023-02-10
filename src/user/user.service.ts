@@ -95,7 +95,7 @@ export class UserService {
   }
 
   private handlerExceptions(error: any){
-    console.log(error);
+    // console.log(error);
     this.logger.error(error);
 
     if(error.code === "23505") throw new BadRequestException(error.detail);

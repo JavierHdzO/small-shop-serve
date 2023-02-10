@@ -5,10 +5,12 @@ import configuration from './config/configuration';
 import { validationSchema } from './config/validation';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      load: [configuration] ,
       validationSchema
     }),
     TypeOrmModule.forRoot({
@@ -21,10 +23,10 @@ import { UserModule } from './user/user.module';
       entities:[User],
       synchronize: true
     }),
-    UserModule
+    UserModule,
+    AuthModule
 
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}

@@ -1,0 +1,1 @@
+export type { UserAuth } from "./user.interfaces";
