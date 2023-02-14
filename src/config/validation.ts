@@ -6,4 +6,5 @@ export const validationSchema =  joi.object({
     PASSWORD_DB: joi.string(),
     USERNAME_DB: joi.string(),
     NAME_DB: joi.string(),
+    SECRET_KEY_JWT: joi.string()
 });
