@@ -7,6 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { UserAuth } from 'src/user/interfaces';
+import { GoogleCreateDto } from 'src/user/dto/google-register.dto';
+
+
 @Injectable()
 export class AuthService {
 
@@ -47,24 +50,24 @@ export class AuthService {
     }
 
 
-    // async validateGoogleToken(googleCreateDto: GoogleCreateDto): Promise<TokenPayload>{
+    async validateGoogleToken(googleCreateDto: GoogleCreateDto): Promise<TokenPayload>{
 
-    //     if(!googleCreateDto.g_csrf_token) throw new BadRequestException('Critical information not found');
+        if(!googleCreateDto.g_csrf_token) throw new BadRequestException('Critical information not found');
 
-    //     const ticket = await this.client.verifyIdToken({
-    //         idToken: googleCreateDto.credential,
-    //         audience: this.configService.get('CLIENT_ID_GOOGLE')
-    //     });
+        const ticket = await this.client.verifyIdToken({
+            idToken: googleCreateDto.credential,
+            audience: this.configService.get('CLIENT_ID_GOOGLE')
+        });
 
-    //     const payload = ticket.getPayload();
+        const payload = ticket.getPayload();
         
         
-    //     if(!payload || !payload.email) throw new BadRequestException('User information not found');
+        if(!payload || !payload.email) throw new BadRequestException('User information not found');
 
-    //     return {
-    //         ...payload
-    //     }
-    // }
+        return {
+            ...payload
+        }
+    }
 
     
 

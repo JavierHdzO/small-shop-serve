@@ -29,6 +29,33 @@ export class UserService {
     }
   }
 
+  async createGoogle(googleCreateDto: GoogleCreateDto){
+    const { email, sub, name, given_name='user' } = await this.authService.validateGoogleToken(googleCreateDto);
+
+    if( !email || !sub ) throw new BadRequestException("User's information not found");
+
+
+    const username:string = `${ given_name.replace(' ','') }-${ sub }`
+
+    try{
+      const user = this.userRepository.create({
+        email,
+        name,
+        username,
+        google:true,
+        password:''
+      });
+
+      await this.userRepository.save(user);
+
+      return user;
+    }
+    catch(error){
+      this.handlerExceptions(error);
+    }
+
+  }
+
   findAll() {
     return `This action returns all user`;
   }
@@ -100,6 +127,8 @@ export class UserService {
     }
 
   }
+
+
 
 
   private handlerExceptions(error: any){
