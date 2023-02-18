@@ -46,8 +46,10 @@ export class User {
 
     @BeforeInsert()
     hashPassword(){
-        const saltRounds = genSaltSync(10);
-        this.password =hashSync(this.password, saltRounds);
+        if(!this.google){
+            const saltRounds = genSaltSync(10);
+            this.password =hashSync(this.password, saltRounds);
+        }
     }
 
     

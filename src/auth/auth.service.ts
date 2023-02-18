@@ -1,13 +1,11 @@
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import { compare } from 'bcrypt';
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt/dist';
-import { UserService } from 'src/user/user.service';
-import { UserAuth } from 'src/user/interfaces';
-import { GoogleRegisterDto } from './dtos/google-register.dto';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BadRequestException } from '@nestjs/common/exceptions';
-
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
+import { GoogleCreateDto } from 'src/user/dto/google-register.dto';
+import { UserAuth } from 'src/user/interfaces';
 @Injectable()
 export class AuthService {
 
@@ -47,12 +45,12 @@ export class AuthService {
     }
 
 
-    async validateGoogleToken(googleRegisterDto: GoogleRegisterDto): Promise<TokenPayload>{
+    async validateGoogleToken(googleCreateDto: GoogleCreateDto): Promise<TokenPayload>{
 
-        if(!googleRegisterDto.g_csrf_token) throw new BadRequestException('Critical information not found');
+        if(!googleCreateDto.g_csrf_token) throw new BadRequestException('Critical information not found');
 
         const ticket = await this.client.verifyIdToken({
-            idToken: googleRegisterDto.credential,
+            idToken: googleCreateDto.credential,
             audience: this.configService.get('CLIENT_ID_GOOGLE')
         });
 

@@ -3,7 +3,6 @@ import { Request } from 'express';
 import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { GoogleRegisterDto } from './dtos/google-register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,15 +15,15 @@ export class AuthController {
   }
 
 
-  @Post('register/google')
-  registerGoogle(@Body() googleRegisterDto:GoogleRegisterDto){
+  // @Post('register/google')
+  // registerGoogle(@Body() googleRegisterDto:GoogleRegisterDto){
     
-    // console.log(googleRegisterDto);
-    this.authService.validateGoogleToken(googleRegisterDto);
+  //   // console.log(googleRegisterDto);
+  //   this.authService.validateGoogleToken(googleRegisterDto);
 
-    return {
-      ok:true
-    }
-  }
+  //   return {
+  //     ok:true
+  //   }
+  // }
 
 }

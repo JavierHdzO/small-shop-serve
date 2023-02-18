@@ -1,6 +1,6 @@
 import { IsString, Min } from 'class-validator';
 
-export class GoogleRegisterDto {
+export class GoogleCreateDto {
 
     @IsString()
     clientId: string;

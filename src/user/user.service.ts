@@ -1,10 +1,12 @@
-import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validate } from 'uuid';
+import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity'
+import { AuthService } from 'src/auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { GoogleCreateDto } from './dto/google-register.dto';
 
 @Injectable()
 export class UserService {
@@ -12,7 +14,8 @@ export class UserService {
   
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly authService: AuthService
   ){}
 
   async create(createUserDto: CreateUserDto) {
@@ -87,6 +90,35 @@ export class UserService {
     try {
       user.status = false;
       await this.userRepository.save(user);
+
+      
+
+    } catch (error) {
+      this.handlerExceptions(error);
+    }
+
+  }
+
+  async createGoogle(googleCreateDto: GoogleCreateDto){
+
+    const { email, name, sub, given_name='', family_name='' } = await this.authService.validateGoogleToken(googleCreateDto);
+
+    const username:string = (given_name.trim().length > 0)
+                                ? `${given_name}-${sub}`
+                                : `${family_name}-${sub}`;
+
+    try {
+      const user:User =  this.userRepository.create({
+        email,
+        name,
+        password:'',
+        username,
+        google: true
+      });
+
+      await this.userRepository.save(user);
+
+      return user;
 
     } catch (error) {
       this.handlerExceptions(error);
