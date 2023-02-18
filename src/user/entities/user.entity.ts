@@ -44,6 +44,13 @@ export class User {
     })
     status: boolean;
 
+    @Column({
+        type:'text',
+        array: true,
+        default: ['User']
+    })
+    roles: String[]
+
     @BeforeInsert()
     hashPassword(){
         if(!this.google){

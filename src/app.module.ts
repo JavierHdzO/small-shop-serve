@@ -6,6 +6,7 @@ import { validationSchema } from './config/validation';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -23,8 +24,9 @@ import { AuthModule } from './auth/auth.module';
       entities:[User],
       synchronize: true
     }),
+    AuthModule,
     UserModule,
-    AuthModule
+    CommonModule
 
   ],
   controllers: [],

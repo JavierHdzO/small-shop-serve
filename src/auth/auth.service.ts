@@ -1,10 +1,11 @@
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import { compare } from 'bcrypt';
+import { Repository } from 'typeorm';
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
-import { GoogleCreateDto } from 'src/user/dto/google-register.dto';
+import { User } from 'src/user/entities/user.entity';
 import { UserAuth } from 'src/user/interfaces';
 @Injectable()
 export class AuthService {
@@ -12,7 +13,8 @@ export class AuthService {
     private readonly client: OAuth2Client;
 
     constructor(
-        private readonly userService: UserService,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService
     ){
@@ -21,7 +23,7 @@ export class AuthService {
 
     async validateUser(email:string, pass:string):Promise<UserAuth|null>{
 
-        const user = await this.userService.findOne(email);
+        const user = await this.userRepository.findOneBy({email});
 
         const confirmPass =  !user? 
             false:
@@ -45,24 +47,24 @@ export class AuthService {
     }
 
 
-    async validateGoogleToken(googleCreateDto: GoogleCreateDto): Promise<TokenPayload>{
+    // async validateGoogleToken(googleCreateDto: GoogleCreateDto): Promise<TokenPayload>{
 
-        if(!googleCreateDto.g_csrf_token) throw new BadRequestException('Critical information not found');
+    //     if(!googleCreateDto.g_csrf_token) throw new BadRequestException('Critical information not found');
 
-        const ticket = await this.client.verifyIdToken({
-            idToken: googleCreateDto.credential,
-            audience: this.configService.get('CLIENT_ID_GOOGLE')
-        });
+    //     const ticket = await this.client.verifyIdToken({
+    //         idToken: googleCreateDto.credential,
+    //         audience: this.configService.get('CLIENT_ID_GOOGLE')
+    //     });
 
-        const payload = ticket.getPayload();
+    //     const payload = ticket.getPayload();
         
         
-        if(!payload || !payload.email) throw new BadRequestException('User information not found');
+    //     if(!payload || !payload.email) throw new BadRequestException('User information not found');
 
-        return {
-            ...payload
-        }
-    }
+    //     return {
+    //         ...payload
+    //     }
+    // }
 
     
 
