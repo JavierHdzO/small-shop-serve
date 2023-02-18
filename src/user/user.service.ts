@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { validate } from 'uuid';
-import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -65,7 +65,7 @@ export class UserService {
       return user;  
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto):Promise<User|undefined|void> {
+  async update(id: string, updateUserDto: UpdateUserDto, userAuthenticated:User):Promise<User|undefined|void> {
 
       const user =  await this.userRepository.preload({
         id,
@@ -73,6 +73,7 @@ export class UserService {
       });
 
       if(!user || !user.status) throw new BadRequestException('User not found');
+      if(user.id !== userAuthenticated.id) throw new UnauthorizedException();
 
       try {
         await this.userRepository.save(user);
@@ -83,15 +84,16 @@ export class UserService {
     
   }
 
-  async remove(id: string) {
+  async remove(id: string, userAuthenticated:User) {
     const user = await this.findOne(id);
-    if(!user) throw new BadRequestException('User not found');
+    if(!user || !user.status) throw new BadRequestException('User not found');
+    if(user.id !== userAuthenticated.id) throw new UnauthorizedException();
 
     try {
       user.status = false;
       await this.userRepository.save(user);
 
-      
+      return { message: 'User was deleted successfully'};      
 
     } catch (error) {
       this.handlerExceptions(error);
@@ -101,7 +103,6 @@ export class UserService {
 
 
   private handlerExceptions(error: any){
-    // console.log(error);
     this.logger.error(error);
 
     if(error.code === "23505") throw new BadRequestException(error.detail);

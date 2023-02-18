@@ -30,14 +30,15 @@ export class UserController {
     return this.userService.findOneResponse(term);
   }
 
-  
+  @Auth(Role.USER)
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto, @User() user: UserEntity) {
+    return this.userService.update(id, updateUserDto, user);
   }
 
+  @Auth(Role.USER)
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.remove(id);
+  remove(@Param('id', ParseUUIDPipe) id: string, @User() user: UserEntity) {
+    return this.userService.remove(id, user);
   }
 }
