@@ -1,7 +1,9 @@
-import { Controller, Request, Post } from '@nestjs/common';
+import { Controller, Req, Post, Body } from '@nestjs/common';
+import { Request } from 'express';
 import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { GoogleRegisterDto } from './dtos/google-register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -9,7 +11,20 @@ export class AuthController {
 
   @UseGuards( LocalAuthGuard )
   @Post('login')
-  async login(@Request() req:any){
+  async login(@Req() req:any){
     return this.authService.login(req.user);
   }
+
+
+  @Post('register/google')
+  registerGoogle(@Body() googleRegisterDto:GoogleRegisterDto){
+    
+    // console.log(googleRegisterDto);
+    this.authService.validateGoogleToken(googleRegisterDto);
+
+    return {
+      ok:true
+    }
+  }
+
 }
