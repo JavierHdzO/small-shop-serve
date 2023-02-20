@@ -17,6 +17,11 @@ export class UserController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
+
+  @Post('register/google')
+  createByGoogle(@Body() googleCreateDto:GoogleCreateDto){
+    return this.userService.createGoogle(googleCreateDto);
+  }
   
   @Auth(Role.USER)
   @Get()

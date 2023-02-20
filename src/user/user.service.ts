@@ -35,7 +35,7 @@ export class UserService {
     if( !email || !sub ) throw new BadRequestException("User's information not found");
 
 
-    const username:string = `${ given_name.replace(' ','') }-${ sub }`
+    const username:string = `${ given_name.replace(' ','') }-${ sub }`.toLowerCase();
 
     try{
       const user = this.userRepository.create({
