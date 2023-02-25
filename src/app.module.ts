@@ -4,9 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
 import { validationSchema } from './config/validation';
 import { User } from './user/entities/user.entity';
+import { Category } from './categories/entities/category.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -21,12 +24,14 @@ import { CommonModule } from './common/common.module';
       username:process.env.USERNAME_DB,
       password:process.env.PASSWORD_DB,
       database:process.env.NAME_DB,
-      entities:[User],
+      entities:[User, Category],
       synchronize: true
     }),
     AuthModule,
     UserModule,
-    CommonModule
+    CommonModule,
+    ProductsModule,
+    CategoriesModule
 
   ],
   controllers: [],

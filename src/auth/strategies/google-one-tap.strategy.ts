@@ -18,7 +18,7 @@ export class GoogleOneTapStrategy extends PassportStrategy( Strategy ){
         super({
             clientID: configService.get('GOOGLE_CLIENT_ID'),
             clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
-            verifyCsrfToken: false
+            verifyCsrfToken: true
 
         });
     }

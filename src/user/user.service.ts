@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { Repository } from 'typeorm';
 import { validate } from 'uuid';
 import { Injectable, Logger, BadRequestException, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
@@ -29,8 +30,8 @@ export class UserService {
     }
   }
 
-  async createGoogle(googleCreateDto: GoogleCreateDto){
-    const { email, sub, name, given_name='user' } = await this.authService.validateGoogleToken(googleCreateDto);
+  async createGoogle(googleCreateDto: GoogleCreateDto, request: Request){
+    const { email, sub, name, given_name='user' } = await this.authService.validateGoogleToken(googleCreateDto, request);
 
     if( !email || !sub ) throw new BadRequestException("User's information not found");
 
@@ -127,8 +128,6 @@ export class UserService {
     }
 
   }
-
-
 
 
   private handlerExceptions(error: any){

@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import { compare } from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -52,8 +53,6 @@ export class AuthService {
 
     }
 
-    
-
     async login(user: UserAuth){
         const payload = { id: user.id };
 
@@ -63,9 +62,9 @@ export class AuthService {
     }
 
 
-    async validateGoogleToken(googleCreateDto: GoogleCreateDto): Promise<TokenPayload>{
-
-        if(!googleCreateDto.g_csrf_token) throw new BadRequestException('Critical information not found');
+    async validateGoogleToken(googleCreateDto: GoogleCreateDto, request:Request): Promise<TokenPayload>{
+        if(!request.cookies?.g_csrf_token || !googleCreateDto.g_csrf_token) throw new BadRequestException('Critical information not found');
+        if(request.cookies?.g_csrf_token !== googleCreateDto.g_csrf_token) throw new BadRequestException();
 
         const ticket = await this.client.verifyIdToken({
             idToken: googleCreateDto.credential,
