@@ -1,11 +1,10 @@
 import { Repository } from 'typeorm';
 import { validate } from 'uuid';
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
-import {  } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class CategoriesService {
@@ -41,23 +40,52 @@ export class CategoriesService {
 
   async findOne(term: string) {
     
-    let category: Category | null;
-    if(validate(term)){
-      category = await this.categoryRepository.findOneBy({ id: term});
-    }else{
+    try {
+      let category: Category | null;
 
-      category = await this.categoryRepository.findOneBy({ name: term });
+      if(validate(term)){
+        category = await this.categoryRepository.findOneBy({ id: term});
+      }else{
+
+        category = await this.categoryRepository.findOneBy({ name: term });
+      }
+      
+      return category;
+    } catch (error) {
+      this.handlerException(error);
     }
-    
+  }
+
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    let category;
+    try {
+      category = await this.categoryRepository.preload({
+        id,
+        ...updateCategoryDto
+      });
+    } catch (error) {
+      this.handlerException(error);
+    }
+    if(!category) throw new BadRequestException();
+
     return category;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
+  async remove(id: string) {
+    const category = await this.findOne(id);
+    if(!category || !category.active) throw new BadRequestException();
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+    category.active = false;
+
+    try {
+      await this.categoryRepository.save(category);
+
+      return {
+        message: `Category with ${id} was deleted successfully`
+      };
+    } catch (error) {
+      this.handlerException(error);
+    }
   }
 
   handlerException(error: any ){
