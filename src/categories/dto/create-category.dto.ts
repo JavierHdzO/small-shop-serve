@@ -15,8 +15,11 @@ export class CreateCategoryDto {
     @IsOptional()
     description?: string;
 
-    @Exclude()
-    @Transform( stringToTypeEnum )
-    type: TypeCategory;
+    @IsString()
+    @Min(3)
+    type: string;
+
+    
+
 
 }

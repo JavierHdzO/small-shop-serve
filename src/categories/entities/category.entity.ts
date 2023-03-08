@@ -18,10 +18,9 @@ export class Category {
     description: string;
 
     @Column({
-        type:'enum',
-        enum:['footwear', 'clothing', 'accessory']
+        type:'text',
     })
-    type: TypeCategory;
+    type: string;
 
 
     @Column({

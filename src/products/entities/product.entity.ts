@@ -32,6 +32,7 @@ export class Product {
 
 
     genre:string;
+    
 
     active: boolean;
 }

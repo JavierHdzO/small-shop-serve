@@ -10,7 +10,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true
+      whitelist: true,
+      forbidNonWhitelisted: true
     })
   );
   await app.listen(3000);
